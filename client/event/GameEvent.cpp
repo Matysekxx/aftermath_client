@@ -17,10 +17,9 @@ nlohmann::json GameEvent::getPayload() const {
     return payload;
 }
 
-GameEvent parseEvent(std::string& message) {
+GameEvent parseEvent(const std::string& message) {
     nlohmann::json json = nlohmann::json::parse(message);
     const auto type = json.value("type", "UNKNOWN");
-    const EventType eventType = stringToType.contains(type) ? stringToType[type] : EventType::UNKNOWN;
+    const EventType eventType = stringToType.count(type) == 1 ? stringToType[type] : EventType::UNKNOWN;
     return {eventType, json};
 }
-

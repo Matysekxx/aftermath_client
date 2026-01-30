@@ -10,7 +10,6 @@
 
 template<typename T>
 class BlockingQueue {
-private:
     std::queue<T> _queue;
     std::mutex _mutex;
     std::condition_variable _cond;

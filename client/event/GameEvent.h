@@ -19,7 +19,7 @@ class GameEvent {
     [[nodiscard]] nlohmann::json getPayload() const;
 };
 
-static GameEvent parseEvent(std::string& message);
+GameEvent parseEvent(const std::string& message);
 
 
 
