@@ -15,8 +15,8 @@ class GameEvent {
         nlohmann::json payload;
     public:
     GameEvent(EventType type, const nlohmann::json &payload);
-    EventType getType() const;
-    nlohmann::json getPayload() const;
+    [[nodiscard]] EventType getType() const;
+    [[nodiscard]] nlohmann::json getPayload() const;
 };
 
 static GameEvent parseEvent(std::string& message);

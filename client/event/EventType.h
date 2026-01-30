@@ -4,6 +4,7 @@
 
 #ifndef EVENTTYPE_H
 #define EVENTTYPE_H
+#include <map>
 
 enum class EventType {
     PLAYER_MOVED,
