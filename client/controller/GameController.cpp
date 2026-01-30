@@ -15,7 +15,10 @@ bool GameController::isRunning() const {
 }
 
 void GameController::update() {
-    // TODO: Process game logic and events
+    GameEvent event(EventType::UNKNOWN, {});
+    while (inputQueue->tryPop(event)) {
+        handleEvent(event);
+    }
 }
 
 void GameController::handleEvent(const GameEvent& event) {
