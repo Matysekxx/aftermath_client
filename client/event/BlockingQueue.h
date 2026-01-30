@@ -28,6 +28,16 @@ public:
         _queue.pop();
         return item;
     }
+
+    bool tryPop(T& item) {
+        std::unique_lock lock(_mutex);
+        if (_queue.empty()) {
+            return false;
+        }
+        item = std::move(_queue.front());
+        _queue.pop();
+        return true;
+    }
 };
 
 
