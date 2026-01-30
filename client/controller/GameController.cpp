@@ -10,6 +10,10 @@ GameController::GameController(BlockingQueue<GameEvent>* inQueue, BlockingQueue<
     this->running = true;
 }
 
+bool GameController::isRunning() const {
+    return running;
+}
+
 void GameController::update() {
     // TODO: Process game logic and events
 }

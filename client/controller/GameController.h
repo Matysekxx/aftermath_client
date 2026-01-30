@@ -17,7 +17,7 @@ private:
 
 public:
     GameController(BlockingQueue<GameEvent>* inQueue, BlockingQueue<GameEvent>* outQueue);
-
+    bool isRunning() const;
     void update();
     void handleEvent(const GameEvent& event);
     void stop();
