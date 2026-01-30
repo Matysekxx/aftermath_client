@@ -3,6 +3,8 @@
 //
 
 #include "Application.h"
+#include <thread>
+#include <chrono>
 
 Application::Application(const std::string& url) {
     this->fromServerToClient = std::make_unique<BlockingQueue<GameEvent>>();
@@ -16,8 +18,10 @@ Application::Application(const std::string& url) {
 void Application::execute() const {
     wsHandler->start();
     networkSender->start();
-    while (true) {
+
+    while (gameController->isRunning()) {
         inputHandler->processInput();
         gameController->update();
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
 }

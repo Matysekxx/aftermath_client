@@ -1,8 +1,8 @@
-
-
 #include "Application.h"
 
 int main() {
-    Application app("http://localhost:8000");
+    const Application app("ws://localhost:8080");
     app.execute();
+
+    return 0;
 }
