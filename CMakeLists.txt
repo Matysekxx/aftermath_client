@@ -1,21 +1,36 @@
 cmake_minimum_required(VERSION 3.31)
 project(aftermath_client)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
+set(WITH_SSL OFF CACHE BOOL "" FORCE)
+set(LIBUS_NO_SSL ON CACHE BOOL "" FORCE)
+
 FetchContent_Declare(
-        asio
-        GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
-        GIT_TAG        asio-1-30-2
+        libuv
+        GIT_REPOSITORY https://github.com/libuv/libuv.git
+        GIT_TAG        v1.48.0
 )
 
 FetchContent_Declare(
-        websocketpp
-        GIT_REPOSITORY https://github.com/zaphoyd/websocketpp.git
-        GIT_TAG        0.8.2
+        zlib
+        GIT_REPOSITORY https://github.com/madler/zlib.git
+        GIT_TAG        v1.3.1
+)
+
+FetchContent_Declare(
+        usockets
+        GIT_REPOSITORY https://github.com/uNetworking/uSockets.git
+        GIT_TAG        v0.8.8
+)
+
+FetchContent_Declare(
+        uwebsockets
+        GIT_REPOSITORY https://github.com/uNetworking/uWebSockets.git
+        GIT_TAG        v20.70.0
 )
 
 FetchContent_Declare(
@@ -24,48 +39,58 @@ FetchContent_Declare(
         GIT_TAG        v3.11.3
 )
 
-FetchContent_MakeAvailable(asio websocketpp json)
+FetchContent_MakeAvailable(libuv zlib usockets uwebsockets json)
 
-add_executable(aftermath_client
-        client/main.cpp
-        client/Application.cpp
-        client/network/WebSocketHandler.cpp
-        client/event/GameEvent.cpp
+file(GLOB USOCKETS_SOURCES
+    "${usockets_SOURCE_DIR}/src/*.c"
+    "${usockets_SOURCE_DIR}/src/eventing/*.c"
+    "${usockets_SOURCE_DIR}/src/crypto/*.c"
 )
 
+add_executable(
+        aftermath_client
+        client/main.cpp
+        client/Application.h
+        client/Application.cpp
+        client/network/WebSocketHandler.cpp
+        client/network/NetworkSender.h
+        client/network/NetworkSender.cpp
+        client/event/GameEvent.h
+        client/event/GameEvent.cpp
+        client/controller/GameController.h
+        client/controller/GameController.cpp
+        client/ui/Renderer.h
+        client/ui/Renderer.cpp
+        client/model/GameState.h
+        client/model/GameState.cpp
+        client/input/InputHandler.h
+        client/input/InputHandler.cpp
+        ${USOCKETS_SOURCES}
+)
+
+find_package(Threads REQUIRED)
+
 target_include_directories(aftermath_client PRIVATE
-        ${asio_SOURCE_DIR}/asio/include
-        ${websocketpp_SOURCE_DIR}
-        ${json_SOURCE_DIR}/include
+        ${usockets_SOURCE_DIR}/src
+        ${uwebsockets_SOURCE_DIR}/src
+        ${libuv_SOURCE_DIR}/include
+        ${zlib_SOURCE_DIR}
+        ${zlib_BINARY_DIR}
 )
 
 target_compile_definitions(aftermath_client PRIVATE
-        ASIO_STANDALONE
-        _WEBSOCKETPP_CPP11_STL_
-        _WEBSOCKETPP_CPP11_THREAD_
-        _WEBSOCKETPP_CPP11_CHRONO_
-        _WEBSOCKETPP_CPP11_RANDOM_
-        _WEBSOCKETPP_CPP11_MEMORY_
-        _WEBSOCKETPP_CPP11_TYPE_TRAITS_
-        _WEBSOCKETPP_CPP11_FUNCTIONAL_
-        _WEBSOCKETPP_NO_CPP11_FUNCTIONAL_
+    LIBUS_NO_SSL
+    LIBUS_USE_LIBUV=1
 )
-
-find_package(Threads REQUIRED)
-
-if(WIN32)
-    set(EXTRA_LIBS ws2_32 mswsock)
-endif()
-
-find_package(Threads REQUIRED)
-
-if(WIN32)
-    set(EXTRA_LIBS ws2_32 mswsock)
-endif()
 
 target_link_libraries(aftermath_client
         PRIVATE
-        Threads::Threads
+        uv_a
+        zlibstatic
         nlohmann_json::nlohmann_json
-        ${EXTRA_LIBS}
+        Threads::Threads
+        ws2_32
+        iphlpapi
+        userenv
+        psapi
 )
