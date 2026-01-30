@@ -7,7 +7,7 @@
 WebSocketHandler::WebSocketHandler(const std::string &url) {
     webSocket.setUrl(url);
     webSocket.setOnMessageCallback([](const ix::WebSocketMessagePtr &message) {
-
+        //TODO: pridat logiku  reseni zprav z spring boot serveru
     });
 }
 
@@ -18,4 +18,9 @@ void WebSocketHandler::start() {
 void WebSocketHandler::stop() {
     webSocket.stop();
 }
+
+WebSocketHandler::~WebSocketHandler() {
+    webSocket.close();
+}
+
 

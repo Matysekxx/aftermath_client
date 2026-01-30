@@ -11,7 +11,7 @@ class WebSocketHandler {
     private:
         ix::WebSocket webSocket;
     public:
-        WebSocketHandler(const std::string &url);
+        explicit WebSocketHandler(const std::string &url);
         ~WebSocketHandler();
         void start();
         void stop();
