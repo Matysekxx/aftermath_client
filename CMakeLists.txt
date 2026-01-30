@@ -15,9 +15,27 @@ FetchContent_Declare(
         GIT_TAG        v11.4.4
 )
 
-FetchContent_MakeAvailable(ixwebsocket)
+FetchContent_Declare(
+        json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG        v3.11.3
+)
 
-add_executable(aftermath_client client/main.cpp)
+FetchContent_MakeAvailable(ixwebsocket json)
+
+add_executable(
+        aftermath_client
+        client/main.cpp
+        client/network/WebSocketHandler.cpp
+        client/event/GameEvent.h
+        client/event/GameEvent.cpp
+)
 
 find_package(Threads REQUIRED)
-target_link_libraries(aftermath_client PRIVATE ixwebsocket::ixwebsocket Threads::Threads)
+
+target_link_libraries(aftermath_client
+        PRIVATE
+        ixwebsocket::ixwebsocket
+        nlohmann_json::nlohmann_json
+        Threads::Threads
+)
