@@ -21,6 +21,7 @@ private:
     BlockingQueue<GameEvent> *eventQueue;
     std::thread networkThread;
     std::atomic<bool> running{false};
+    std::atomic<bool> connected{false};
 
     WSClient m_client;
     websocketpp::connection_hdl m_hdl;
@@ -32,6 +33,7 @@ public:
     void start();
     void stop();
     void send(const std::string& message);
+    bool isConnected() const { return connected; }
 };
 
 #endif //WEBSOCKETHANDLER_H

@@ -15,6 +15,7 @@ WebSocketHandler::WebSocketHandler(std::string url, BlockingQueue<GameEvent> *qu
 
     m_client.set_open_handler([this](const websocketpp::connection_hdl &hdl) {
         m_hdl = hdl;
+        connected = true;
         std::cout << "Successfully connected to server via WebSocket++!" << std::endl;
     });
 
@@ -30,11 +31,13 @@ WebSocketHandler::WebSocketHandler(std::string url, BlockingQueue<GameEvent> *qu
 
     m_client.set_fail_handler([this](const websocketpp::connection_hdl& hdl) {
         std::cerr << "Connection failed!" << std::endl;
+        connected = false;
         running = false;
     });
 
     m_client.set_close_handler([this](const websocketpp::connection_hdl& hdl) {
         std::cout << "Connection closed." << std::endl;
+        connected = false;
         running = false;
     });
 }
@@ -73,6 +76,9 @@ void WebSocketHandler::stop() {
 }
 
 void WebSocketHandler::send(const std::string &message) {
+    if (!connected) {
+        return;
+    }
     websocketpp::lib::error_code ec;
     m_client.send(m_hdl, message, websocketpp::frame::opcode::text, ec);
     if (ec) {
