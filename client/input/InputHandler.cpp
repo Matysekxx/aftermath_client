@@ -19,7 +19,7 @@ void InputHandler::setupBindings() {
 
 void InputHandler::processInput() {
     if (_kbhit()) {
-        const char key = tolower(getch());
+        char key = tolower(getch());
         if (keyBindings.count(key)) {
             keyBindings[key]();
         }

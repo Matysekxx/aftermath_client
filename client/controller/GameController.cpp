@@ -5,7 +5,9 @@
 #include "GameController.h"
 
 GameController::GameController(BlockingQueue<GameEvent>* inQueue, BlockingQueue<GameEvent>* outQueue) {
-    // TODO: Initialize controller
+    this->inputQueue = inQueue;
+    this->outputQueue = outQueue;
+    this->running = true;
 }
 
 void GameController::update() {
