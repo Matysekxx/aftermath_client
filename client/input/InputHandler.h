@@ -11,7 +11,8 @@
 class InputHandler {
 private:
     BlockingQueue<GameEvent>* outputQueue;
-
+    std::map<char, std::function<void()>> keyBindings;
+    void setupBindings();
 public:
     explicit InputHandler(BlockingQueue<GameEvent>* outQueue);
 
