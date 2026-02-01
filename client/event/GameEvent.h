@@ -11,8 +11,9 @@
 #include <nlohmann/json.hpp>
 
 class GameEvent {
+    private:
     EventType type;
-        nlohmann::json payload;
+    nlohmann::json payload;
     public:
     GameEvent(EventType type, const nlohmann::json &payload);
     [[nodiscard]] EventType getType() const;
