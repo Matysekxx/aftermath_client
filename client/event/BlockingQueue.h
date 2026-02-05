@@ -1,7 +1,3 @@
-//
-// Created by chalo on 30.01.2026.
-//
-
 #ifndef BLOCKINGQUEUE_H
 #define BLOCKINGQUEUE_H
 #include <condition_variable>
@@ -23,13 +19,13 @@ public:
 
     T take() {
         std::unique_lock lock(_mutex);
-        _cond.wait(lock, [this]{ return !_queue.empty(); });
+        _cond.wait(lock, [this] { return !_queue.empty(); });
         const T item = std::move(_queue.front());
         _queue.pop();
         return item;
     }
 
-    bool tryPop(T& item) {
+    bool tryPop(T &item) {
         std::unique_lock lock(_mutex);
         if (_queue.empty()) {
             return false;
@@ -39,7 +35,6 @@ public:
         return true;
     }
 };
-
 
 
 #endif //BLOCKINGQUEUE_H

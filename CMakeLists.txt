@@ -6,19 +6,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
 
-# 1. Musíme najít vlákna, aby mohl fungovat target Threads::Threads
 find_package(Threads REQUIRED)
 
-# 2. Vypnutí závislostí PŘED stažením IXWebSocket
 set(USE_ZLIB OFF CACHE BOOL "" FORCE)
 set(USE_TLS OFF CACHE BOOL "" FORCE)
 set(USE_DEFLATE OFF CACHE BOOL "" FORCE)
 
-# 3. Stažení knihoven
 FetchContent_Declare(
         ixwebsocket
         GIT_REPOSITORY https://github.com/machinezone/IXWebSocket.git
-        GIT_TAG        v11.0.8
+        GIT_TAG        v11.4.4
 )
 
 FetchContent_Declare(
@@ -27,10 +24,15 @@ FetchContent_Declare(
         GIT_TAG        v3.11.3
 )
 
-FetchContent_MakeAvailable(ixwebsocket json)
+FetchContent_Declare(
+        ftxui
+        GIT_REPOSITORY https://github.com/ArthurSonzogni/FTXUI
+        GIT_TAG        v5.0.0
+)
 
-# 4. Načtení tvých souborů
-file(GLOB_RECURSE CLIENT_SOURCES
+FetchContent_MakeAvailable(ixwebsocket json ftxui)
+
+file(GLOB_RECURSE CLIENT_SOURCES CONFIGURE_DEPENDS
         "client/*.cpp"
         "client/*.h"
         "client/*.hpp"
@@ -40,11 +42,17 @@ add_executable(aftermath_client ${CLIENT_SOURCES})
 
 target_include_directories(aftermath_client PRIVATE client)
 
-# 5. Linkování (používáme přímo název ixwebsocket, protože alias někdy zlobí)
 target_link_libraries(aftermath_client
         PRIVATE
         ixwebsocket
         nlohmann_json::nlohmann_json
         Threads::Threads
+        ftxui::screen
+        ftxui::dom
+        ftxui::component
         $<$<PLATFORM_ID:Windows>:ws2_32 iphlpapi userenv psapi>
 )
+
+if(MINGW)
+    target_link_options(aftermath_client PRIVATE -static -static-libgcc -static-libstdc++)
+endif()

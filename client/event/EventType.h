@@ -1,26 +1,48 @@
-//
-// Created by chalo on 30.01.2026.
-//
-
 #ifndef EVENTTYPE_H
 #define EVENTTYPE_H
 #include <map>
 
 enum class EventType {
+    CONNECTION_ESTABLISHED,
+    SEND_LOGIN_OPTIONS,
+    SEND_MAP_DATA,
+    SEND_STATS,
+    SEND_INVENTORY,
+    SEND_PLAYER_POSITION,
     PLAYER_MOVED,
-    STATS_UPDATE,
-    MAP_OBJECTS_UPDATE,
-    GAME_OVER,
+    SEND_GAME_OVER,
+    SEND_NPCS,
+    SEND_MAP_OBJECTS,
+    OPEN_METRO_UI,
+    OPEN_TRADE_UI,
+    BROADCAST_CHAT_MSG,
+    SEND_MESSAGE,
+    SEND_ERROR,
     NOTIFICATION,
+    BROADCAST_PLAYERS,
     UNKNOWN
 };
 
 static std::map<std::string, EventType> stringToType = {
+    {"SEND_LOGIN_OPTIONS", EventType::SEND_LOGIN_OPTIONS},
+    {"LOGIN_OPTIONS", EventType::SEND_LOGIN_OPTIONS},
+    {"SEND_MAP_DATA", EventType::SEND_MAP_DATA},
+    {"MAP_DATA", EventType::SEND_MAP_DATA},
+    {"SEND_STATS", EventType::SEND_STATS},
+    {"STATS_UPDATE", EventType::SEND_STATS},
+    {"SEND_INVENTORY", EventType::SEND_INVENTORY},
+    {"SEND_PLAYER_POSITION", EventType::SEND_PLAYER_POSITION},
     {"PLAYER_MOVED", EventType::PLAYER_MOVED},
-    {"STATS_UPDATE", EventType::STATS_UPDATE},
-    {"MAP_OBJECTS_UPDATE", EventType::MAP_OBJECTS_UPDATE},
-    {"GAME_OVER",  EventType::GAME_OVER},
-    {"NOTIFICATION", EventType::NOTIFICATION}
+    {"SEND_GAME_OVER", EventType::SEND_GAME_OVER},
+    {"SEND_NPCS", EventType::SEND_NPCS},
+    {"NPCS_UPDATE", EventType::SEND_NPCS},
+    {"SEND_MAP_OBJECTS", EventType::SEND_MAP_OBJECTS},
+    {"OPEN_METRO_UI", EventType::OPEN_METRO_UI},
+    {"OPEN_TRADE_UI", EventType::OPEN_TRADE_UI},
+    {"BROADCAST_CHAT_MSG", EventType::BROADCAST_CHAT_MSG},
+    {"SEND_MESSAGE", EventType::SEND_MESSAGE},
+    {"SEND_ERROR", EventType::SEND_ERROR},
+    {"BROADCAST_PLAYERS", EventType::BROADCAST_PLAYERS}
 };
 
 #endif //EVENTTYPE_H

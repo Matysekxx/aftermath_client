@@ -1,7 +1,3 @@
-//
-// Created by chalo on 30.01.2026.
-//
-
 #include "GameEvent.h"
 
 GameEvent::GameEvent(const EventType type, const nlohmann::json &payload) {
@@ -17,7 +13,7 @@ nlohmann::json GameEvent::getPayload() const {
     return payload;
 }
 
-GameEvent parseEvent(const std::string& message) {
+GameEvent parseEvent(const std::string &message) {
     nlohmann::json json = nlohmann::json::parse(message);
     const auto type = json.value("type", "UNKNOWN");
     const EventType eventType = stringToType.count(type) == 1 ? stringToType[type] : EventType::UNKNOWN;

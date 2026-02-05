@@ -1,7 +1,3 @@
-//
-// Created by chalo on 30.01.2026.
-//
-
 #ifndef GAMEEVENT_H
 #define GAMEEVENT_H
 
@@ -11,17 +7,19 @@
 #include <nlohmann/json.hpp>
 
 class GameEvent {
-    private:
+private:
     EventType type;
     nlohmann::json payload;
-    public:
+
+public:
     GameEvent(EventType type, const nlohmann::json &payload);
+
     [[nodiscard]] EventType getType() const;
+
     [[nodiscard]] nlohmann::json getPayload() const;
 };
 
-GameEvent parseEvent(const std::string& message);
-
+GameEvent parseEvent(const std::string &message);
 
 
 #endif //GAMEEVENT_H
