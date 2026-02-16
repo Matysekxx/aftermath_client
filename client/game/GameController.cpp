@@ -27,50 +27,10 @@ namespace {
         item.name = safeString(j, "name", "Unknown");
         item.type = safeString(j, "type", "MISC");
         item.description = safeString(j, "description", "");
+        item.rarity = safeString(j, "rarity", "COMMON");
         item.quantity = safeInt(j, "quantity", 1);
         item.price = safeInt(j, "price", 0);
         return item;
-    }
-
-    dto::PlayerDto parsePlayer(const json &j) {
-        dto::PlayerDto p;
-        if (j.is_null()) return p;
-
-        p.id = safeString(j, "id", "");
-        p.name = safeString(j, "name", "Unknown");
-        p.x = safeInt(j, "x", 0);
-        p.y = safeInt(j, "y", 0);
-        p.layerIndex = safeInt(j, "layerIndex", 0);
-        p.hp = safeInt(j, "hp", 0);
-        p.maxHp = safeInt(j, "maxHp", 100);
-        p.rads = safeInt(j, "rads", 0);
-        p.radsLimit = safeInt(j, "radsLimit", 100);
-        p.credits = safeInt(j, "credits", 0);
-        p.debt = safeInt(j, "debt", 0);
-        p.state = safeString(j, "state", "ALIVE");
-
-        if (j.contains("equippedWeaponSlot")) {
-            if (j["equippedWeaponSlot"].is_number()) p.equippedWeaponSlot = std::to_string(j["equippedWeaponSlot"].get<int>());
-            else if (j["equippedWeaponSlot"].is_string()) p.equippedWeaponSlot = j["equippedWeaponSlot"].get<std::string>();
-        }
-
-        if (j.contains("equippedMaskSlot")) {
-            if (j["equippedMaskSlot"].is_number()) p.equippedMaskSlot = std::to_string(j["equippedMaskSlot"].get<int>());
-            else if (j["equippedMaskSlot"].is_string()) p.equippedMaskSlot = j["equippedMaskSlot"].get<std::string>();
-        }
-
-        if (j.contains("inventory") && !j["inventory"].is_null()) {
-            const auto &inv = j["inventory"];
-            p.inventory.capacity = safeInt(inv, "capacity", 0);
-            if (inv.contains("slots") && !inv["slots"].is_null()) {
-                for (auto &[key, val]: inv["slots"].items()) {
-                    if (!val.is_null()) {
-                        p.inventory.slots[std::stoi(key)] = parseItem(val);
-                    }
-                }
-            }
-        }
-        return p;
     }
 
     dto::MapDataResponse parseMap(const json &j) {

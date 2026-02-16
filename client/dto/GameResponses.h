@@ -33,6 +33,7 @@ namespace dto {
         std::string name;
         std::string type;
         std::string description;
+        std::string rarity;
         int quantity = 0;
         int price = 0;
     };

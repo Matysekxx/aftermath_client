@@ -4,7 +4,6 @@
 #include "event/GameEvent.h"
 #include "GameState.h"
 #include "../ui/TuiRenderer.h"
-#include <atomic>
 
 class InputHandler;
 
@@ -13,7 +12,7 @@ class GameController {
     BlockingQueue<GameEvent> *inputQueue;
     GameState gameState;
     TuiRenderer renderer;
-    std::atomic<bool> running;
+    bool running{};
 
 public:
     GameController(BlockingQueue<GameEvent> *inputQueue, BlockingQueue<GameEvent> *outputQueue);

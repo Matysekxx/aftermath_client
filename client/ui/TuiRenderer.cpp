@@ -21,6 +21,14 @@ std::vector<std::string> split_utf8(const std::string& str) {
     return chars;
 }
 
+Color getRarityColor(const std::string& rarity) {
+    if (rarity == "LEGENDARY") return Color::Orange1;
+    if (rarity == "EPIC") return Color::Magenta1;
+    if (rarity == "RARE") return Color::BlueLight;
+    if (rarity == "UNCOMMON") return Color::GreenLight;
+    return Color::GrayLight;
+}
+
 TuiRenderer::TuiRenderer() {
 }
 
@@ -242,6 +250,15 @@ Element TuiRenderer::buildMap(const GameState &state) {
         }
     }
 
+    for (const auto &other : state.otherPlayers) {
+        if (other.z != state.player.layerIndex) continue;
+        const int relX = other.x - clientTopLeftX;
+        const int relY = other.y - clientTopLeftY;
+        if (relY >= 0 && relY < height && relX >= 0 && relX < width) {
+            display_grid[relY][relX] = "P";
+        }
+    }
+
     int pRelX = state.player.x - clientTopLeftX;
     int pRelY = state.player.y - clientTopLeftY;
     if (pRelY >= 0 && pRelY < height && pRelX >= 0 && pRelX < width) {
@@ -310,7 +327,7 @@ Element TuiRenderer::buildInventory(const GameState &state) {
     for (const auto &[slot, item]: inventory.slots) {
         auto row = hbox({
             text(" " + std::to_string(slot) + " ") | color(Color::Cyan),
-            text(item.name) | color(Color::White),
+            text(item.name) | color(getRarityColor(item.rarity)),
             filler(),
             text("x" + std::to_string(item.quantity) + " ") | color(Color::Yellow)
         });
@@ -358,26 +375,45 @@ Element TuiRenderer::buildTradeUi(const GameState &state) {
     const auto& tradeOffer = state.tradeUi;
     Elements items;
 
-    int idx = 0;
-    for (const auto &item: tradeOffer.items) {
-        auto row = hbox({
-            text(" " + item.name + " ") | color(Color::White),
-            filler(),
-            text(std::to_string(item.price) + " CR ") | color(Color::Gold1)
-        });
+    if (state.tradeMode == TradeMode::BUY) {
+        int idx = 0;
+        for (const auto &item: tradeOffer.items) {
+            auto row = hbox({
+                text(" " + item.name + " ") | color(getRarityColor(item.rarity)),
+                filler(),
+                text(std::to_string(item.price) + " CR ") | color(Color::Gold1)
+            });
 
-        if (idx == state.tradeSelectionIndex) {
-            row = row | bgcolor(Color::Green) | color(Color::Black) | bold;
+            if (idx == state.tradeSelectionIndex) {
+                row = row | bgcolor(Color::Green) | color(Color::Black) | bold;
+            }
+            items.push_back(row);
+            idx++;
         }
-        items.push_back(row);
-        idx++;
+    } else {
+        int idx = 0;
+        for (const auto &[slot, item]: state.player.inventory.slots) {
+            auto row = hbox({
+                text(" " + item.name + " ") | color(getRarityColor(item.rarity)),
+                filler(),
+                text("x" + std::to_string(item.quantity) + " ") | color(Color::Yellow)
+            });
+
+            if (idx == state.selectedInventoryIndex) {
+                row = row | bgcolor(Color::Red) | color(Color::Black) | bold;
+            }
+            items.push_back(row);
+            idx++;
+        }
     }
 
     if (items.empty()) {
         items.push_back(text("No items") | center | dim);
     }
 
-    auto title = text(" TRADER: " + tradeOffer.npcName + " [BUYING] ") | color(Color::Green) | bold;
+    auto title = (state.tradeMode == TradeMode::BUY)
+        ? text(" TRADER: " + tradeOffer.npcName + " [BUYING] ") | color(Color::Green) | bold
+        : text(" TRADER: " + tradeOffer.npcName + " [SELLING] ") | color(Color::Red) | bold;
 
     return window(hbox({title, filler(), text("[S] SWITCH MODE ")}), vbox(items))
         | size(WIDTH, EQUAL, 60) | size(HEIGHT, EQUAL, 20) | borderStyled(ROUNDED) | color(Color::White);
