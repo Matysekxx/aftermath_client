@@ -55,6 +55,9 @@ public:
     int menuSelectionIndex = 0;
     bool exitRequested = false;
 
+    bool isPayDebtOpen = false;
+    std::string debtInput;
+
     void updatePlayer(const dto::PlayerDto &playerDto);
 
     void updateMap(const dto::MapDataResponse &newMap);
@@ -85,6 +88,7 @@ public:
     void toggleHelp();
     void toggleMenu();
     void scrollMenu(int delta);
+    void togglePayDebt();
 
     void addGameLog(const std::string& msg);
     void addNetworkLog(const std::string& dir, const std::string& type, const std::string& payload);

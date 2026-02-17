@@ -24,6 +24,8 @@ public:
     void start();
 
     void stop();
+
+    void sendPayDebt(int amount);
 };
 
 

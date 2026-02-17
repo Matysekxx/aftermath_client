@@ -124,11 +124,23 @@ void GameState::toggleMenu() {
         isInventoryOpen = false;
         isMetroUiOpen = false;
         isTradeUiOpen = false;
+        isPayDebtOpen = false;
     }
 }
 
 void GameState::scrollMenu(int delta) {
     menuSelectionIndex = (menuSelectionIndex + delta + 3) % 3;
+}
+
+void GameState::togglePayDebt() {
+    isPayDebtOpen = !isPayDebtOpen;
+    debtInput.clear();
+    if (isPayDebtOpen) {
+        isInventoryOpen = false;
+        isMetroUiOpen = false;
+        isTradeUiOpen = false;
+        isMenuOpen = false;
+    }
 }
 
 void GameState::addGameLog(const std::string &msg) {

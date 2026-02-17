@@ -73,6 +73,34 @@ void InputHandler::processGameInput(GameState &state) {
             return;
         }
 
+        if (state.isPayDebtOpen) {
+            if (key == 27) {
+                state.togglePayDebt();
+                return;
+            }
+            if (key == KEY_ENTER_CODE) {
+                if (!state.debtInput.empty()) {
+                    try {
+                        int amount = std::stoi(state.debtInput);
+                        json payload;
+                        payload["amount"] = amount;
+                        json req;
+                        req["type"] = "PAY_DEBT";
+                        req["payload"] = payload;
+                        outputQueue->enqueue(parseEvent(req.dump()));
+                        state.togglePayDebt();
+                    } catch (...) {
+                        state.setError("Invalid amount");
+                    }
+                }
+            } else if (key == KEY_BACKSPACE_CODE) {
+                if (!state.debtInput.empty()) state.debtInput.pop_back();
+            } else if (isdigit(key)) {
+                state.debtInput += static_cast<char>(key);
+            }
+            return;
+        }
+
         if (state.isMetroUiOpen) {
             if (isExtended && key == KEY_UP_CODE) state.scrollMetro(-1);
             else if (isExtended && key == KEY_DOWN_CODE) state.scrollMetro(1);
@@ -174,6 +202,12 @@ void InputHandler::processGameInput(GameState &state) {
             state.toggleHelp();
             return;
         }
+
+        if (!isExtended && (key == 'p' || key == 'P')) {
+            state.togglePayDebt();
+            return;
+        }
+
         if (keyBindings.count(bindingKey)) {
             keyBindings[bindingKey]();
         } else if (!isExtended && keyBindings.count(tolower(key))) {

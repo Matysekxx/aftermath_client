@@ -20,6 +20,13 @@ namespace {
         return def;
     }
 
+    long safeLong(const json &j, const std::string &key, long def) {
+        if (j.contains(key) && !j[key].is_null() && j[key].is_number()) {
+            return j[key].get<long>();
+        }
+        return def;
+    }
+
     dto::ItemDto parseItem(const json &j) {
         if (j.is_null()) return {};
         dto::ItemDto item;
@@ -43,7 +50,6 @@ namespace {
         m.centerZ = safeInt(j, "centerZ", 0);
         m.rangeX = safeInt(j, "rangeX", 0);
         m.rangeY = safeInt(j, "rangeY", 0);
-        m.isCleared = j.value("isCleared", false);
         if (j.contains("layers") && j["layers"].is_object()) {
             for (auto &[key, val]: j["layers"].items()) {
                 if (val.is_array()) {
@@ -140,6 +146,7 @@ void GameController::update() {
             gameState.player.rads = safeInt(data, "rads", gameState.player.rads);
             gameState.player.credits = safeInt(data, "credits", gameState.player.credits);
             gameState.player.debt = safeInt(data, "debt", gameState.player.debt);
+            gameState.player.globalDebt = safeLong(data, "globalDebt", gameState.player.globalDebt);
 
             if (data.contains("equippedWeaponSlot")) {
                 if (data["equippedWeaponSlot"].is_null()) gameState.player.equippedWeaponSlot = "";
@@ -257,6 +264,12 @@ void GameController::update() {
                 if (type == EventType::SEND_ERROR) {
                     gameState.setError(msg);
                 }
+            }
+        } else if (type == EventType::GLOBAL_ANNOUNCEMENT) {
+            if (data.is_string()) {
+                std::string msg = data.get<std::string>();
+                gameState.addChatMessage({"[GLOBAL] " + msg});
+                gameState.addGameLog("[GLOBAL] " + msg);
             }
         } else if (type == EventType::BROADCAST_PLAYERS) {
             std::vector<dto::OtherPlayerDto> players;

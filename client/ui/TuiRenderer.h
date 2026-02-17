@@ -30,6 +30,7 @@ private:
 
     ftxui::Element buildHelp(const GameState &state);
     ftxui::Element buildMenu(const GameState &state);
+    ftxui::Element buildPayDebtUi(const GameState &state);
 };
 
 #endif //TUIRENDERER_H

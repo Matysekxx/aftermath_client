@@ -59,6 +59,9 @@ void TuiRenderer::render(const GameState &state) {
         if (state.isMenuOpen) {
             main_view = dbox({main_view, buildMenu(state) | clear_under | center});
         }
+        if (state.isPayDebtOpen) {
+            main_view = dbox({main_view, buildPayDebtUi(state) | clear_under | center});
+        }
         if (state.showHelp) {
             main_view = dbox({main_view, buildHelp(state) | clear_under | align_right});
         }
@@ -286,12 +289,6 @@ Element TuiRenderer::buildMap(const GameState &state) {
     }
 
     auto map_title = text(" SECTOR: " + state.map.mapName + " ") | hcenter | bold;
-    if (state.map.isCleared) {
-        map_title = hbox({
-            text(" SECTOR: " + state.map.mapName + " ") | hcenter | bold,
-            text(" [CLEARED] ") | color(Color::Green) | bold
-        }) | hcenter;
-    }
 
     return vbox({
         map_title | bgcolor(Color::Cyan) | color(Color::Black),
@@ -316,7 +313,9 @@ Element TuiRenderer::buildStats(const dto::PlayerDto &player) {
         separator(),
         text(" " + std::to_string(player.credits) + " CR ") | color(Color::Black) | bgcolor(Color::Gold1) | bold,
         separator(),
-        text(" DEBT: " + std::to_string(player.debt) + " CR ") | color(Color::White) | bgcolor(Color::Red) | bold
+        text(" DEBT: " + std::to_string(player.debt) + " CR ") | color(Color::White) | bgcolor(Color::Red) | bold,
+        separator(),
+        text(" GLOBAL DEBT: " + std::to_string(player.globalDebt) + " CR ") | color(Color::White) | bgcolor(Color::Magenta) | bold
     }) | borderStyled(ROUNDED) | color(Color::Cyan) | size(HEIGHT, EQUAL, 3);
 }
 
@@ -432,6 +431,10 @@ Element TuiRenderer::buildHelp(const GameState &state) {
         key_row("SPACE ", "Attack / Fire Weapon"),
         key_row("E     ", "Interact / Loot"),
         key_row("I     ", "Open Cargo Hold"),
+        key_row("  U   ", "Use Item (in Inventory)"),
+        key_row("  E   ", "Equip Item (in Inventory)"),
+        key_row("  D   ", "Drop Item (in Inventory)"),
+        key_row("P     ", "Pay Debt"),
         key_row("L     ", "Toggle Logs"),
         key_row("H     ", "Close Help"),
         key_row("ESC   ", "System Menu")
@@ -451,4 +454,15 @@ Element TuiRenderer::buildMenu(const GameState &state) {
         option("MANUAL", 1),
         option("QUIT", 2)
     })) | size(WIDTH, EQUAL, 30) | borderStyled(ROUNDED) | color(Color::Green);
+}
+
+Element TuiRenderer::buildPayDebtUi(const GameState &state) {
+    return window(text(" DEBT REPAYMENT ") | hcenter | bold, vbox({
+        text("Current Debt: " + std::to_string(state.player.debt) + " CR") | color(Color::Red),
+        separator(),
+        text("Enter amount to pay:"),
+        text(state.debtInput + "_") | bold | color(Color::Yellow) | inverted,
+        separator(),
+        text("[ENTER] Confirm | [ESC] Cancel") | dim
+    })) | size(WIDTH, EQUAL, 40) | borderStyled(ROUNDED) | color(Color::Magenta);
 }

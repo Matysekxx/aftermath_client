@@ -56,6 +56,7 @@ namespace dto {
         int radsLimit = 0;
         int credits = 0;
         int debt = 0;
+        long globalDebt = 0;
         InventoryDto inventory;
         std::string equippedWeaponSlot;
         std::string equippedMaskSlot;
@@ -93,7 +94,6 @@ namespace dto {
         int centerZ = 0;
         int rangeX = 0;
         int rangeY = 0;
-        bool isCleared = false;
         std::map<std::string, std::vector<std::string> > layers;
     };
 

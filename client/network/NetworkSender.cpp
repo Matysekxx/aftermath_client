@@ -1,5 +1,6 @@
 #include "NetworkSender.h"
 #include <iostream>
+#include <nlohmann/json.hpp>
 
 NetworkSender::NetworkSender(BlockingQueue<GameEvent> *outputQueue, NetworkHandler *networkHandler) {
     this->outputQueue = outputQueue;
@@ -33,4 +34,13 @@ void NetworkSender::run() {
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
         }
     }
+}
+
+void NetworkSender::sendPayDebt(int amount) {
+    nlohmann::json payload;
+    payload["amount"] = amount;
+    nlohmann::json root;
+    root["type"] = "PAY_DEBT";
+    root["payload"] = payload;
+    outputQueue->enqueue(GameEvent(EventType::PAY_DEBT, root));
 }
