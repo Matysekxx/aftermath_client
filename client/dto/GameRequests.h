@@ -11,11 +11,11 @@ namespace dto {
         [[nodiscard]] virtual std::string getType() const = 0;
     };
 
-    struct InitRequest : public GameRequest {
+    struct InitRequest : GameRequest {
         [[nodiscard]] std::string getType() const override { return ACTION_INIT; }
     };
 
-    struct LoginRequest : public GameRequest {
+    struct LoginRequest : GameRequest {
         std::string username;
         std::string playerClass;
         std::string startingMapId;
@@ -23,59 +23,59 @@ namespace dto {
         [[nodiscard]] std::string getType() const override { return ACTION_LOGIN; }
     };
 
-    struct MoveRequest : public GameRequest {
+    struct MoveRequest : GameRequest {
         std::string direction;
 
         [[nodiscard]] std::string getType() const override { return ACTION_MOVE; }
     };
 
-    struct ChatRequest : public GameRequest {
+    struct ChatRequest : GameRequest {
         std::string message;
 
         [[nodiscard]] std::string getType() const override { return ACTION_CHAT; }
     };
 
-    struct AttackRequest : public GameRequest {
+    struct AttackRequest : GameRequest {
         [[nodiscard]] std::string getType() const override { return ACTION_ATTACK; }
     };
 
-    struct InteractRequest : public GameRequest {
+    struct InteractRequest : GameRequest {
         [[nodiscard]] std::string getType() const override { return ACTION_INTERACT; }
     };
 
-    struct UseRequest : public GameRequest {
+    struct UseRequest : GameRequest {
         int slotIndex;
 
         [[nodiscard]] std::string getType() const override { return ACTION_USE; }
     };
 
-    struct EquipRequest : public GameRequest {
+    struct EquipRequest : GameRequest {
         int slotIndex;
 
         [[nodiscard]] std::string getType() const override { return ACTION_EQUIP; }
     };
 
-    struct DropRequest : public GameRequest {
+    struct DropRequest : GameRequest {
         int slotIndex;
         int amount;
         [[nodiscard]] std::string getType() const override { return ACTION_DROP; }
     };
 
-    struct BuyRequest : public GameRequest {
+    struct BuyRequest : GameRequest {
         std::string npcId;
         int itemIndex;
 
         [[nodiscard]] std::string getType() const override { return ACTION_BUY; }
     };
 
-    struct SellRequest : public GameRequest {
+    struct SellRequest : GameRequest {
         std::string npcId;
         int slotIndex;
 
         [[nodiscard]] std::string getType() const override { return ACTION_SELL; }
     };
 
-    struct TravelRequest : public GameRequest {
+    struct TravelRequest : GameRequest {
         std::string mapId;
         std::string lineId;
 

@@ -26,8 +26,8 @@ void NetworkSender::stop() {
 
 void NetworkSender::run() {
     while (running) {
-        GameEvent event(EventType::UNKNOWN, nullptr);
-        if (outputQueue->tryPop(event)) {
+        if (GameEvent event(EventType::UNKNOWN, nullptr);
+            outputQueue->tryPop(event)) {
             std::string msg = event.getPayload().dump();
             ws->send(msg);
         } else {

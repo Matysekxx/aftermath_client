@@ -165,18 +165,18 @@ void InputHandler::processGameInput(GameState &state) {
             if (isExtended && key == KEY_UP_CODE) state.scrollInventory(-1);
             else if (isExtended && key == KEY_DOWN_CODE) state.scrollInventory(1);
             else if (!isExtended && (key == 'e' || key == 'E')) {
-                const int slot = state.getSelectedInventorySlot();
-                if (slot != -1) {
+                if (const int slot = state.getSelectedInventorySlot();
+                    slot != -1) {
                     outputQueue->enqueue(parseEvent(R"({"type": "EQUIP", "payload": {"slotIndex": )" + std::to_string(slot) + "}}"));
                 }
             } else if (!isExtended && (key == 'u' || key == 'U')) {
-                int slot = state.getSelectedInventorySlot();
-                if (slot != -1) {
+                if (const int slot = state.getSelectedInventorySlot();
+                    slot != -1) {
                     outputQueue->enqueue(parseEvent(R"({"type": "USE", "payload": {"slotIndex": )" + std::to_string(slot) + "}}"));
                 }
             } else if (!isExtended && (key == 'd' || key == 'D')) {
-                const int slot = state.getSelectedInventorySlot();
-                if (slot != -1) {
+                if (const int slot = state.getSelectedInventorySlot();
+                    slot != -1) {
                     outputQueue->enqueue(parseEvent(R"({"type": "DROP", "payload": {"slotIndex": )" + std::to_string(slot) + R"(, "amount": 1}})"));
                 }
             }

@@ -63,7 +63,7 @@ void TuiRenderer::render(const GameState &state) {
             main_view = dbox({main_view, buildPayDebtUi(state) | clear_under | center});
         }
         if (state.showHelp) {
-            main_view = dbox({main_view, buildHelp(state) | clear_under | align_right});
+            main_view = dbox({main_view, buildHelp() | clear_under | align_right});
         }
 
         Element logs_area = text("");
@@ -418,7 +418,7 @@ Element TuiRenderer::buildTradeUi(const GameState &state) {
         | size(WIDTH, EQUAL, 60) | size(HEIGHT, EQUAL, 20) | borderStyled(ROUNDED) | color(Color::White);
 }
 
-Element TuiRenderer::buildHelp(const GameState &state) {
+Element TuiRenderer::buildHelp() {
     auto key_row = [](const std::string& key, const std::string& desc) {
         return hbox({
             text(" " + key + " ") | color(Color::Black) | bgcolor(Color::Cyan) | bold,

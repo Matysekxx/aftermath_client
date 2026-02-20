@@ -28,7 +28,8 @@ private:
 
     ftxui::Element buildTradeUi(const GameState &state);
 
-    ftxui::Element buildHelp(const GameState &state);
+    ftxui::Element buildHelp();
+
     ftxui::Element buildMenu(const GameState &state);
     ftxui::Element buildPayDebtUi(const GameState &state);
 };
