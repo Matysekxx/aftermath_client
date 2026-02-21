@@ -113,11 +113,11 @@ namespace utils {
                         dto::MapObjectDto obj;
                         obj.id = safeString(objJson, "id", "");
                         obj.type = safeString(objJson, "type", "");
-                        obj.action = safeString(objJson, "action", "");
-                        obj.description = safeString(objJson, "description", "");
                         obj.x = safeInt(objJson, "x", 0);
                         obj.y = safeInt(objJson, "y", 0);
                         obj.z = safeInt(objJson, "z", 0);
+                        obj.action = safeString(objJson, "action", "");
+                        obj.description = safeString(objJson, "description", "");
                         objects.push_back(obj);
                     }
                 }

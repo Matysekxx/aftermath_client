@@ -238,6 +238,8 @@ Element TuiRenderer::buildMap(const GameState &state) {
     }
 
     for (const auto &obj: state.objects) {
+        if (obj.z != state.player.layerIndex) continue;
+
         const int relX = obj.x - clientTopLeftX;
         const int relY = obj.y - clientTopLeftY;
         if (relY >= 0 && relY < height && relX >= 0 && relX < width) {
@@ -250,6 +252,8 @@ Element TuiRenderer::buildMap(const GameState &state) {
     }
 
     for (const auto &npc: state.npcs) {
+        if (npc.z != state.player.layerIndex) continue;
+
         const int relX = npc.x - clientTopLeftX;
         const int relY = npc.y - clientTopLeftY;
         if (relY >= 0 && relY < height && relX >= 0 && relX < width) {
