@@ -58,6 +58,12 @@ public:
     bool isPayDebtOpen = false;
     std::string debtInput;
 
+    bool isAnnouncementOpen = false;
+    std::string announcementMessage;
+
+    bool isDialogOpen = false;
+    dto::DialogResponse currentDialog;
+
     void updatePlayer(const dto::PlayerDto &playerDto);
 
     void updateMap(const dto::MapDataResponse &newMap);
@@ -89,6 +95,12 @@ public:
     void toggleMenu();
     void scrollMenu(int delta);
     void togglePayDebt();
+
+    void showAnnouncement(const std::string& msg);
+    void closeAnnouncement();
+
+    void openDialog(const dto::DialogResponse& dialog);
+    void closeDialog();
 
     void addGameLog(const std::string& msg);
     void addNetworkLog(const std::string& dir, const std::string& type, const std::string& payload);

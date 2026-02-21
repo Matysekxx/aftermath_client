@@ -62,6 +62,12 @@ void TuiRenderer::render(const GameState &state) {
         if (state.isPayDebtOpen) {
             main_view = dbox({main_view, buildPayDebtUi(state) | clear_under | center});
         }
+        if (state.isAnnouncementOpen) {
+            main_view = dbox({main_view, buildAnnouncement(state) | clear_under | center});
+        }
+        if (state.isDialogOpen) {
+            main_view = dbox({main_view, buildDialog(state) | clear_under | center});
+        }
         if (state.showHelp) {
             main_view = dbox({main_view, buildHelp() | clear_under | align_right});
         }
@@ -232,6 +238,7 @@ Element TuiRenderer::buildMap(const GameState &state) {
     }
 
     for (const auto &obj: state.objects) {
+        if (obj.z != state.player.layerIndex) continue;
         const int relX = obj.x - clientTopLeftX;
         const int relY = obj.y - clientTopLeftY;
         if (relY >= 0 && relY < height && relX >= 0 && relX < width) {
@@ -244,11 +251,21 @@ Element TuiRenderer::buildMap(const GameState &state) {
     }
 
     for (const auto &npc: state.npcs) {
+        if (npc.z != state.player.layerIndex) continue;
         const int relX = npc.x - clientTopLeftX;
         const int relY = npc.y - clientTopLeftY;
         if (relY >= 0 && relY < height && relX >= 0 && relX < width) {
             std::string symbol = "E";
-            if (!npc.name.empty()) symbol = (npc.aggressive ? "M" : "N");
+            if (!npc.name.empty()) {
+                if (npc.aggressive) {
+                    symbol = "M";
+                } else {
+                    if (npc.interaction == "TRADE") symbol = "T";
+                    else if (npc.interaction == "HEAL") symbol = "H";
+                    else if (npc.interaction == "TALK") symbol = "C";
+                    else symbol = "N";
+                }
+            }
             display_grid[relY][relX] = symbol;
         }
     }
@@ -276,7 +293,10 @@ Element TuiRenderer::buildMap(const GameState &state) {
             if (cell == "@") t = t | color(Color::GreenLight) | bold;
             else if (cell == "P") t |= color(Color::BlueLight) | bold;
             else if (cell == "M") t |=  color(Color::Red) | bold;
-            else if (cell == "N") t |= color(Color::Green) | bold;
+            else if (cell == "N") t |= color(Color::White) | bold;
+            else if (cell == "C") t |= color(Color::Green) | bold;
+            else if (cell == "T") t |= color(Color::Gold1) | bold;
+            else if (cell == "H") t |= color(Color::Magenta1) | bold;
             else if (cell == "■") t |= color(Color::Yellow);
             else if (cell == ">") t |= color(Color::Green);
             else if (cell == "=") t |= color(Color::Cyan);
@@ -414,8 +434,14 @@ Element TuiRenderer::buildTradeUi(const GameState &state) {
         ? text(" TRADER: " + tradeOffer.npcName + " [BUYING] ") | color(Color::Green) | bold
         : text(" TRADER: " + tradeOffer.npcName + " [SELLING] ") | color(Color::Red) | bold;
 
-    return window(hbox({title, filler(), text("[S] SWITCH MODE ")}), vbox(items))
-        | size(WIDTH, EQUAL, 60) | size(HEIGHT, EQUAL, 20) | borderStyled(ROUNDED) | color(Color::White);
+    Element header = hbox({title, filler(), text("[S] SWITCH MODE ")});
+    Element body = vbox(items);
+
+    if (!tradeOffer.welcomeMessage.empty()) {
+        body = vbox({paragraph(tradeOffer.welcomeMessage) | center | color(Color::Yellow), separator(), body});
+    }
+
+    return window(header, body) | size(WIDTH, EQUAL, 60) | size(HEIGHT, EQUAL, 20) | borderStyled(ROUNDED) | color(Color::White);
 }
 
 Element TuiRenderer::buildHelp() {
@@ -466,3 +492,20 @@ Element TuiRenderer::buildPayDebtUi(const GameState &state) {
         text("[ENTER] Confirm | [ESC] Cancel") | dim
     })) | size(WIDTH, EQUAL, 40) | borderStyled(ROUNDED) | color(Color::Magenta);
 }
+
+Element TuiRenderer::buildAnnouncement(const GameState &state) {
+    return window(text(" GLOBAL ANNOUNCEMENT ") | hcenter | bold | blink, vbox({
+        paragraph(state.announcementMessage) | center | bold | color(Color::Yellow),
+        separator(),
+        text("[ENTER] Close") | center | dim
+    })) | size(WIDTH, EQUAL, 60) | borderStyled(ROUNDED) | color(Color::Red);
+}
+
+Element TuiRenderer::buildDialog(const GameState &state) {
+    return window(text(" " + state.currentDialog.npcName + " ") | hcenter | bold, vbox({
+        paragraph(state.currentDialog.text) | center | color(Color::White),
+        separator(),
+        text("[ENTER] Close") | center | dim
+    })) | size(WIDTH, EQUAL, 60) | borderStyled(ROUNDED) | color(Color::White);
+}
+

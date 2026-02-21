@@ -22,7 +22,8 @@ enum class EventType {
     BROADCAST_PLAYERS,
     UNKNOWN,
     GLOBAL_ANNOUNCEMENT,
-    PAY_DEBT
+    PAY_DEBT,
+    DIALOG
 };
 
 static std::map<std::string, EventType> stringToType = {
@@ -46,7 +47,8 @@ static std::map<std::string, EventType> stringToType = {
     {"SEND_ERROR", EventType::SEND_ERROR},
     {"BROADCAST_PLAYERS", EventType::BROADCAST_PLAYERS},
     {"GLOBAL_ANNOUNCEMENT", EventType::GLOBAL_ANNOUNCEMENT},
-    {"PAY_DEBT", EventType::PAY_DEBT}
+    {"PAY_DEBT", EventType::PAY_DEBT},
+    {"DIALOG", EventType::DIALOG}
 };
 
 #endif //EVENTTYPE_H

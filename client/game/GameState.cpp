@@ -125,6 +125,7 @@ void GameState::toggleMenu() {
         isMetroUiOpen = false;
         isTradeUiOpen = false;
         isPayDebtOpen = false;
+        isDialogOpen = false;
     }
 }
 
@@ -140,7 +141,40 @@ void GameState::togglePayDebt() {
         isMetroUiOpen = false;
         isTradeUiOpen = false;
         isMenuOpen = false;
+        isDialogOpen = false;
     }
+}
+
+void GameState::showAnnouncement(const std::string& msg) {
+    announcementMessage = msg;
+    isAnnouncementOpen = true;
+    isInventoryOpen = false;
+    isMetroUiOpen = false;
+    isTradeUiOpen = false;
+    isMenuOpen = false;
+    isPayDebtOpen = false;
+    isDialogOpen = false;
+}
+
+void GameState::closeAnnouncement() {
+    isAnnouncementOpen = false;
+    announcementMessage.clear();
+}
+
+void GameState::openDialog(const dto::DialogResponse& dialog) {
+    currentDialog = dialog;
+    isDialogOpen = true;
+    isInventoryOpen = false;
+    isMetroUiOpen = false;
+    isTradeUiOpen = false;
+    isMenuOpen = false;
+    isPayDebtOpen = false;
+    isAnnouncementOpen = false;
+}
+
+void GameState::closeDialog() {
+    isDialogOpen = false;
+    currentDialog = {};
 }
 
 void GameState::addGameLog(const std::string &msg) {

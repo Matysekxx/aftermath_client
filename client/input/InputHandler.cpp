@@ -48,6 +48,20 @@ void InputHandler::processGameInput(GameState &state) {
 
         const int bindingKey = isExtended ? key + EXTENDED_OFFSET : key;
 
+        if (state.isAnnouncementOpen) {
+            if (key == KEY_ENTER_CODE || key == 27) {
+                state.closeAnnouncement();
+            }
+            return;
+        }
+
+        if (state.isDialogOpen) {
+            if (key == KEY_ENTER_CODE || key == 27) {
+                state.closeDialog();
+            }
+            return;
+        }
+
         if (state.showHelp) {
             if (key == 27 || (!isExtended && (key == 'h' || key == 'H'))) {
                 state.toggleHelp();

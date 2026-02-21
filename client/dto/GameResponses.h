@@ -18,9 +18,11 @@ namespace dto {
         std::string type;
         int x = 0;
         int y = 0;
+        int z = 0;
         int hp = 0;
         int maxHp = 0;
         bool aggressive = false;
+        std::string interaction;
     };
 
     struct StationDto {
@@ -108,6 +110,7 @@ namespace dto {
         std::string npcId;
         std::string npcName;
         std::vector<ItemDto> items;
+        std::string welcomeMessage;
     };
 
     using MapObjectsUpdateResponse = std::vector<MapObjectDto>;
@@ -121,6 +124,11 @@ namespace dto {
         std::string direction;
         std::string type;
         std::string payload;
+    };
+
+    struct DialogResponse {
+        std::string npcName;
+        std::string text;
     };
 }
 

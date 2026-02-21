@@ -200,9 +200,11 @@ void GameController::update() {
                             safeString(npcJson, "type", ""),
                             safeInt(npcJson, "x", 0),
                             safeInt(npcJson, "y", 0),
+                            safeInt(npcJson, "z", 0),
                             safeInt(npcJson, "hp", 0),
                             safeInt(npcJson, "maxHp", 0),
-                            npcJson.value("aggressive", false)
+                            npcJson.value("aggressive", false),
+                            safeString(npcJson, "interaction", "TALK")
                         });
                     }
                 }
@@ -245,6 +247,7 @@ void GameController::update() {
             dto::TradeUiLoadResponse trade;
             trade.npcId = safeString(data, "npcId", "");
             trade.npcName = safeString(data, "npcName", "");
+            trade.welcomeMessage = safeString(data, "welcomeMessage", "");
             if (data.contains("items") && data["items"].is_array()) {
                 for (const auto &item: data["items"]) {
                     if (!item.is_null()) {
@@ -270,6 +273,7 @@ void GameController::update() {
                 std::string msg = data.get<std::string>();
                 gameState.addChatMessage({"[GLOBAL] " + msg});
                 gameState.addGameLog("[GLOBAL] " + msg);
+                gameState.showAnnouncement(msg);
             }
         } else if (type == EventType::BROADCAST_PLAYERS) {
             std::vector<dto::OtherPlayerDto> players;
@@ -290,6 +294,12 @@ void GameController::update() {
                 }
             }
             gameState.updateOtherPlayers(players);
+        } else if (type == EventType::DIALOG) {
+            dto::DialogResponse dialog;
+            dialog.npcName = safeString(data, "npcName", "Unknown");
+            dialog.text = safeString(data, "text", "");
+            gameState.openDialog(dialog);
+            gameState.addGameLog("Dialog started with " + dialog.npcName);
         }
     }
 
