@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Application.h"
 #include <string>
 #include <ixwebsocket/IXNetSystem.h>
@@ -25,7 +27,15 @@ int main(const int argc, char* argv[]) {
     #endif
 
     {
-        const std::string url = (argc > 1) ? argv[1] : "ws://127.0.0.1:8080/game";
+        std::string url;
+        if (argc > 1) {
+            url = argv[1];
+        } else {
+            std::cout << "Usage: " << argv[0] << " <server_url>" << std::endl;
+            std::cout << "Example: " << argv[0] << " ws://localhost:8080/game" << std::endl;
+            std::cout << "Please provide the server URL as an argument." << std::endl;
+            return 1;
+        }
         const Application app(url);
         app.execute();
     }
