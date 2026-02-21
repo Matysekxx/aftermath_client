@@ -1,4 +1,5 @@
 #include "InputHandler.h"
+#include "../game/GameController.h"
 #include <conio.h>
 #include <iostream>
 
@@ -12,8 +13,12 @@ using json = nlohmann::json;
 #define KEY_BACKSPACE_CODE 8
 #define EXTENDED_OFFSET 1000
 
-InputHandler::InputHandler(BlockingQueue<GameEvent> *outQueue) : outputQueue(outQueue) {
+InputHandler::InputHandler(BlockingQueue<GameEvent> *outQueue) : outputQueue(outQueue), gameController(nullptr) {
     setupBindings();
+}
+
+void InputHandler::setGameController(GameController* controller) {
+    this->gameController = controller;
 }
 
 void InputHandler::setupBindings() {
@@ -30,7 +35,9 @@ void InputHandler::setupBindings() {
         outputQueue->enqueue(parseEvent(R"({"type": "MOVE", "payload": {"direction": "RIGHT"}})"));
     };
 
-    keyBindings[' '] = [this]() { outputQueue->enqueue(parseEvent(R"({"type": "ATTACK", "payload": {}})")); };
+    keyBindings[' '] = [this]() {
+        outputQueue->enqueue(parseEvent(R"({"type": "ATTACK", "payload": {}})"));
+    };
     keyBindings['e'] = [this]() { outputQueue->enqueue(parseEvent(R"({"type": "INTERACT", "payload": {}})")); };
     keyBindings['u'] = [this]() {
         outputQueue->enqueue(parseEvent(R"({"type": "USE", "payload": {"slotIndex": 0}})"));
@@ -45,6 +52,7 @@ GameEvent InputHandler::parseEvent(const std::string& jsonStr) {
     if (typeStr == "MOVE") type = EventType::PLAYER_MOVED;
     else if (typeStr == "ATTACK") type = EventType::UNKNOWN;
     else if (typeStr == "INTERACT") type = EventType::UNKNOWN;
+
     return {type, j};
 }
 
@@ -124,8 +132,12 @@ void InputHandler::handleMenuInput(GameState &state, int key, bool isExtended) {
         state.toggleMenu();
         return;
     }
-    if (isExtended && key == KEY_UP_CODE) state.scrollMenu(-1);
-    else if (isExtended && key == KEY_DOWN_CODE) state.scrollMenu(1);
+    if (isExtended && key == KEY_UP_CODE) {
+        state.scrollMenu(-1);
+    }
+    else if (isExtended && key == KEY_DOWN_CODE) {
+        state.scrollMenu(1);
+    }
     else if (key == KEY_ENTER_CODE) {
         switch (state.menuSelectionIndex) {
             case 0: state.toggleMenu(); break;
@@ -164,8 +176,12 @@ void InputHandler::handlePayDebtInput(GameState &state, int key) {
 }
 
 void InputHandler::handleMetroInput(GameState &state, int key, bool isExtended) {
-    if (isExtended && key == KEY_UP_CODE) state.scrollMetro(-1);
-    else if (isExtended && key == KEY_DOWN_CODE) state.scrollMetro(1);
+    if (isExtended && key == KEY_UP_CODE) {
+        state.scrollMetro(-1);
+    }
+    else if (isExtended && key == KEY_DOWN_CODE) {
+        state.scrollMetro(1);
+    }
     else if (key == KEY_ENTER_CODE) {
         auto[id, name] = state.getSelectedMetroStation();
         if (!id.empty()) {
@@ -184,8 +200,12 @@ void InputHandler::handleMetroInput(GameState &state, int key, bool isExtended) 
 }
 
 void InputHandler::handleTradeInput(GameState &state, int key, bool isExtended) {
-    if (isExtended && key == KEY_UP_CODE) state.scrollTrade(-1);
-    else if (isExtended && key == KEY_DOWN_CODE) state.scrollTrade(1);
+    if (isExtended && key == KEY_UP_CODE) {
+        state.scrollTrade(-1);
+    }
+    else if (isExtended && key == KEY_DOWN_CODE) {
+        state.scrollTrade(1);
+    }
     else if (key == KEY_ENTER_CODE) {
         if (state.tradeMode == TradeMode::BUY) {
             auto item = state.getSelectedTradeItem();
@@ -222,8 +242,12 @@ void InputHandler::handleInventoryInput(GameState &state, int key, bool isExtend
         state.toggleInventory();
         return;
     }
-    if (isExtended && key == KEY_UP_CODE) state.scrollInventory(-1);
-    else if (isExtended && key == KEY_DOWN_CODE) state.scrollInventory(1);
+    if (isExtended && key == KEY_UP_CODE) {
+        state.scrollInventory(-1);
+    }
+    else if (isExtended && key == KEY_DOWN_CODE) {
+        state.scrollInventory(1);
+    }
     else if (!isExtended && (key == 'e' || key == 'E')) {
         if (const int slot = state.getSelectedInventorySlot();
             slot != -1) {
@@ -288,13 +312,19 @@ void InputHandler::processLoginInput(GameState &state) {
         }
 
         if (state.loginStep == 1) {
-            if (isExtended && key == KEY_UP_CODE && state.selectedClassIndex > 0) state.selectedClassIndex--;
-            if (isExtended && key == KEY_DOWN_CODE && state.selectedClassIndex < state.loginOptions.classes.size() - 1) state.
-                    selectedClassIndex++;
+            if (isExtended && key == KEY_UP_CODE && state.selectedClassIndex > 0) {
+                state.selectedClassIndex--;
+            }
+            if (isExtended && key == KEY_DOWN_CODE && state.selectedClassIndex < state.loginOptions.classes.size() - 1) {
+                state.selectedClassIndex++;
+            }
         } else if (state.loginStep == 2) {
-            if (isExtended && key == KEY_UP_CODE && state.selectedMapIndex > 0) state.selectedMapIndex--;
-            if (isExtended && key == KEY_DOWN_CODE && state.selectedMapIndex < state.loginOptions.maps.size() - 1) state.
-                    selectedMapIndex++;
+            if (isExtended && key == KEY_UP_CODE && state.selectedMapIndex > 0) {
+                state.selectedMapIndex--;
+            }
+            if (isExtended && key == KEY_DOWN_CODE && state.selectedMapIndex < state.loginOptions.maps.size() - 1) {
+                state.selectedMapIndex++;
+            }
         }
 
         if (key == KEY_BACKSPACE_CODE) {

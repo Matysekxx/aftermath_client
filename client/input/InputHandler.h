@@ -6,10 +6,13 @@
 #include "../game/GameState.h"
 #include <nlohmann/json.hpp>
 
+class GameController;
+
 class InputHandler {
 private:
     BlockingQueue<GameEvent> *outputQueue;
     std::map<int, std::function<void()> > keyBindings;
+    GameController* gameController;
 
     using json = nlohmann::json;
 
@@ -29,8 +32,8 @@ private:
 public:
     explicit InputHandler(BlockingQueue<GameEvent> *outQueue);
 
+    void setGameController(GameController* controller);
     void processGameInput(GameState &state);
-
     void processLoginInput(GameState &state);
 };
 

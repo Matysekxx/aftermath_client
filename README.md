@@ -62,6 +62,11 @@ Master the controls to survive in the metro:
 
 ### 🎮 2. Connecting to the Server
 
+**⚠️ IMPORTANT:** Do NOT run the client directly from your IDE (CLion, Visual Studio) or its integrated terminal. The TUI rendering requires a standalone system terminal (CMD or PowerShell) to function correctly.
+
 1.  **Find a Server:** You need the IP address of a running Aftermath Server.
-2.  **Launch:** Open your terminal (PowerShell or CMD) and run:
-    
+2.  **Launch:** Open your system terminal (PowerShell or CMD), navigate to the folder containing the `.exe`, and run:
+    ```powershell
+    ./aftermath_client.exe ws://<SERVER_IP>:8080/game
+    ```
+    *Example:* `aftermath_client.exe ws://localhost:8080/game`
