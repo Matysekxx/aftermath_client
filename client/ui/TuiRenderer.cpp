@@ -69,7 +69,7 @@ void TuiRenderer::render(const GameState &state) {
             main_view = dbox({main_view, buildDialog(state) | clear_under | center});
         }
         if (state.showHelp) {
-            main_view = dbox({main_view, buildHelp() | clear_under | align_right});
+            main_view = dbox({main_view, buildHelp() | clear_under | center});
         }
 
         Element logs_area = text("");
@@ -238,7 +238,6 @@ Element TuiRenderer::buildMap(const GameState &state) {
     }
 
     for (const auto &obj: state.objects) {
-        if (obj.z != state.player.layerIndex) continue;
         const int relX = obj.x - clientTopLeftX;
         const int relY = obj.y - clientTopLeftY;
         if (relY >= 0 && relY < height && relX >= 0 && relX < width) {
@@ -251,7 +250,6 @@ Element TuiRenderer::buildMap(const GameState &state) {
     }
 
     for (const auto &npc: state.npcs) {
-        if (npc.z != state.player.layerIndex) continue;
         const int relX = npc.x - clientTopLeftX;
         const int relY = npc.y - clientTopLeftY;
         if (relY >= 0 && relY < height && relX >= 0 && relX < width) {
@@ -262,7 +260,6 @@ Element TuiRenderer::buildMap(const GameState &state) {
                 } else {
                     if (npc.interaction == "TRADE") symbol = "T";
                     else if (npc.interaction == "HEAL") symbol = "H";
-                    else if (npc.interaction == "TALK") symbol = "C";
                     else symbol = "N";
                 }
             }
@@ -293,8 +290,7 @@ Element TuiRenderer::buildMap(const GameState &state) {
             if (cell == "@") t = t | color(Color::GreenLight) | bold;
             else if (cell == "P") t |= color(Color::BlueLight) | bold;
             else if (cell == "M") t |=  color(Color::Red) | bold;
-            else if (cell == "N") t |= color(Color::White) | bold;
-            else if (cell == "C") t |= color(Color::Green) | bold;
+            else if (cell == "N") t |= color(Color::Green) | bold;
             else if (cell == "T") t |= color(Color::Gold1) | bold;
             else if (cell == "H") t |= color(Color::Magenta1) | bold;
             else if (cell == "■") t |= color(Color::Yellow);
@@ -434,37 +430,42 @@ Element TuiRenderer::buildTradeUi(const GameState &state) {
         ? text(" TRADER: " + tradeOffer.npcName + " [BUYING] ") | color(Color::Green) | bold
         : text(" TRADER: " + tradeOffer.npcName + " [SELLING] ") | color(Color::Red) | bold;
 
-    Element header = hbox({title, filler(), text("[S] SWITCH MODE ")});
-    Element body = vbox(items);
-
-    if (!tradeOffer.welcomeMessage.empty()) {
-        body = vbox({paragraph(tradeOffer.welcomeMessage) | center | color(Color::Yellow), separator(), body});
-    }
-
-    return window(header, body) | size(WIDTH, EQUAL, 60) | size(HEIGHT, EQUAL, 20) | borderStyled(ROUNDED) | color(Color::White);
+    return window(hbox({title, filler(), text("[S] SWITCH MODE ")}), vbox(items))
+        | size(WIDTH, EQUAL, 60) | size(HEIGHT, EQUAL, 20) | borderStyled(ROUNDED) | color(Color::White);
 }
 
 Element TuiRenderer::buildHelp() {
     auto key_row = [](const std::string& key, const std::string& desc) {
         return hbox({
-            text(" " + key + " ") | color(Color::Black) | bgcolor(Color::Cyan) | bold,
+            text(" " + key + " ") | color(Color::Black) | bgcolor(Color::White) | bold | size(WIDTH, EQUAL, 10),
             text(" " + desc) | color(Color::White)
         });
     };
 
+    auto section_title = [](const std::string& title) {
+        return text(title) | color(Color::GreenLight) | bold | underlined;
+    };
+
     return window(text(" MANUAL ") | hcenter | bold, vbox({
+        section_title(" MOVEMENT "),
         key_row("ARROWS", "Move Character"),
-        key_row("SPACE ", "Attack / Fire Weapon"),
-        key_row("E     ", "Interact / Loot"),
-        key_row("I     ", "Open Cargo Hold"),
-        key_row("  U   ", "Use Item (in Inventory)"),
-        key_row("  E   ", "Equip Item (in Inventory)"),
-        key_row("  D   ", "Drop Item (in Inventory)"),
-        key_row("P     ", "Pay Debt"),
-        key_row("L     ", "Toggle Logs"),
-        key_row("H     ", "Close Help"),
-        key_row("ESC   ", "System Menu")
-    })) | size(WIDTH, EQUAL, 50) | borderStyled(ROUNDED) | color(Color::Cyan);
+        separator(),
+        section_title(" ACTIONS "),
+        key_row("SPACE", "Attack / Fire Weapon"),
+        key_row("E", "Interact / Loot / Talk"),
+        key_row("P", "Pay Debt"),
+        separator(),
+        section_title(" INVENTORY "),
+        key_row("I", "Open/Close Cargo Hold"),
+        key_row("U", "Use Item (in Inventory)"),
+        key_row("E", "Equip Item (in Inventory)"),
+        key_row("D", "Drop Item (in Inventory)"),
+        separator(),
+        section_title(" SYSTEM "),
+        key_row("L", "Toggle Logs"),
+        key_row("H", "Close Help"),
+        key_row("ESC", "System Menu / Back")
+    })) | size(WIDTH, EQUAL, 60) | borderStyled(ROUNDED) | color(Color::White);
 }
 
 Element TuiRenderer::buildMenu(const GameState &state) {
@@ -495,7 +496,7 @@ Element TuiRenderer::buildPayDebtUi(const GameState &state) {
 
 Element TuiRenderer::buildAnnouncement(const GameState &state) {
     return window(text(" GLOBAL ANNOUNCEMENT ") | hcenter | bold | blink, vbox({
-        paragraph(state.announcementMessage) | center | bold | color(Color::Yellow),
+        paragraphAlignCenter(state.announcementMessage) | bold | color(Color::Yellow),
         separator(),
         text("[ENTER] Close") | center | dim
     })) | size(WIDTH, EQUAL, 60) | borderStyled(ROUNDED) | color(Color::Red);
@@ -503,9 +504,8 @@ Element TuiRenderer::buildAnnouncement(const GameState &state) {
 
 Element TuiRenderer::buildDialog(const GameState &state) {
     return window(text(" " + state.currentDialog.npcName + " ") | hcenter | bold, vbox({
-        paragraph(state.currentDialog.text) | center | color(Color::White),
+        paragraphAlignCenter(state.currentDialog.text) | color(Color::White),
         separator(),
         text("[ENTER] Close") | center | dim
     })) | size(WIDTH, EQUAL, 60) | borderStyled(ROUNDED) | color(Color::White);
 }
-
