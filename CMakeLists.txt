@@ -50,15 +50,9 @@ target_link_libraries(aftermath_client
         ftxui::screen
         ftxui::dom
         ftxui::component
-        $<$<PLATFORM_ID:Windows>:ws2_32 iphlpapi userenv psapi winmm>
+        $<$<PLATFORM_ID:Windows>:ws2_32 iphlpapi userenv psapi>
 )
 
 if(MINGW)
     target_link_options(aftermath_client PRIVATE -static -static-libgcc -static-libstdc++)
 endif()
-
-add_custom_command(TARGET aftermath_client POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/res
-        $<TARGET_FILE_DIR:aftermath_client>/res
-)

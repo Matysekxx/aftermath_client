@@ -7,12 +7,10 @@
 
 using namespace utils;
 
-GameController::GameController(BlockingQueue<GameEvent> *inputQueue, BlockingQueue<GameEvent> *outputQueue, AudioService* audioService) {
+GameController::GameController(BlockingQueue<GameEvent> *inputQueue, BlockingQueue<GameEvent> *outputQueue) {
     this->inputQueue = inputQueue;
     this->outputQueue = outputQueue;
-    this->audioService = audioService;
     this->running = true;
-    this->audioService->playBackgroundMusic("res/audio/Echoes_in_the_Concrete_Deep.mp3");
 }
 
 void GameController::update() {
@@ -119,9 +117,6 @@ void GameController::handleSendStats(const json& data) {
         else if (data["equippedMaskSlot"].is_string()) gameState.player.equippedMaskSlot = data["equippedMaskSlot"].get<std::string>();
     }
 
-    if (gameState.clientState != ClientState::PLAYING) {
-        audioService->stopMusic();
-    }
     gameState.clientState = ClientState::PLAYING;
     gameState.clearError();
 }
@@ -135,9 +130,6 @@ void GameController::handleSendInventory(const json& data) {
             }
         }
     }
-    if (gameState.clientState != ClientState::PLAYING) {
-        audioService->stopMusic();
-    }
     gameState.clientState = ClientState::PLAYING;
 }
 
@@ -145,9 +137,6 @@ void GameController::handleSendPlayerPosition(const json& data) {
     gameState.player.x = JsonParser::safeInt(data, "x", gameState.player.x);
     gameState.player.y = JsonParser::safeInt(data, "y", gameState.player.y);
     gameState.player.layerIndex = JsonParser::safeInt(data, "z", gameState.player.layerIndex);
-    if (gameState.clientState != ClientState::PLAYING) {
-        audioService->stopMusic();
-    }
     gameState.clientState = ClientState::PLAYING;
 }
 

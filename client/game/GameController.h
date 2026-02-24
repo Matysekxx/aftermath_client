@@ -1,11 +1,9 @@
 #ifndef GAMECONTROLLER_H
 #define GAMECONTROLLER_H
 
-
 #include "../event/GameEvent.h"
 #include "GameState.h"
 #include "../ui/TuiRenderer.h"
-#include "../audio/AudioService.h"
 #include <nlohmann/json.hpp>
 
 #include "event/BlockingQueue.h"
@@ -14,7 +12,7 @@ class InputHandler;
 
 class GameController {
 public:
-    GameController(BlockingQueue<GameEvent> *inputQueue, BlockingQueue<GameEvent> *outputQueue, AudioService* audioService);
+    GameController(BlockingQueue<GameEvent> *inputQueue, BlockingQueue<GameEvent> *outputQueue);
 
     void update();
 
@@ -29,7 +27,6 @@ private:
     BlockingQueue<GameEvent> *outputQueue;
     GameState gameState;
     TuiRenderer renderer;
-    AudioService* audioService;
     bool running;
 
     using json = nlohmann::json;

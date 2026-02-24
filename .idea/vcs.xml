@@ -2,25 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/ftxui-src" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/ixwebsocket-src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/json-src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/libuv-src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/pdcurses-src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/usockets-src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/usockets-src/boringssl" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/usockets-src/lsquic" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/usockets-src/lsquic/src/liblsquic/ls-qpack" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/usockets-src/lsquic/src/lshpack" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/uwebsockets-src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/uwebsockets-src/fuzzing/libEpollFuzzer" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/uwebsockets-src/fuzzing/seed-corpus" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/uwebsockets-src/h1spec" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/uwebsockets-src/uSockets" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/uwebsockets-src/uSockets/boringssl" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/uwebsockets-src/uSockets/lsquic" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/uwebsockets-src/uSockets/lsquic/src/liblsquic/ls-qpack" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/uwebsockets-src/uSockets/lsquic/src/lshpack" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/zlib-src" vcs="Git" />
   </component>
 </project>
