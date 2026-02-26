@@ -20,7 +20,6 @@ void GameController::update() {
     }
 
     GameEvent event(EventType::UNKNOWN, nullptr);
-    static std::ofstream logger("client_debug.log", std::ios::app);
 
     while (inputQueue->tryPop(event)) {
         const auto &type = event.getType();
@@ -32,16 +31,12 @@ void GameController::update() {
         }
 
         if (root.is_null()) {
+            static std::ofstream logger("client_debug.log", std::ios::app);
             if (logger.is_open()) logger << "[ERROR] Event payload is NULL!" << std::endl;
             continue;
         }
 
-        if (logger.is_open()) {
-            std::string typeStr = JsonParser::safeString(root, "type", "UNKNOWN_TYPE");
-            logger << "[EVENT] Type: " << typeStr << " | Enum: " << static_cast<int>(type) << std::endl;
-            std::lock_guard lock(gameState.stateMutex);
-            gameState.addNetworkLog("IN", typeStr, root.value("payload", json({})).dump());
-        }
+        logEvent(type, root);
 
         if (type == EventType::UNKNOWN) {
             std::string rawType = JsonParser::safeString(root, "type", "???");
@@ -65,6 +60,16 @@ void GameController::update() {
     }
 
     renderer.render(gameState);
+}
+
+void GameController::logEvent(const EventType& type, const json& root) {
+    static std::ofstream logger("client_debug.log", std::ios::app);
+    if (logger.is_open()) {
+        std::string typeStr = JsonParser::safeString(root, "type", "UNKNOWN_TYPE");
+        logger << "[EVENT] Type: " << typeStr << " | Enum: " << static_cast<int>(type) << std::endl;
+        std::lock_guard lock(gameState.stateMutex);
+        gameState.addNetworkLog("IN", typeStr, root.value("payload", json({})).dump());
+    }
 }
 
 void GameController::dispatchEvent(const EventType& type, const json& data) {

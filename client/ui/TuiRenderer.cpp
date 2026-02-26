@@ -5,6 +5,28 @@
 
 using namespace ftxui;
 
+namespace {
+    constexpr int MapWidth = 60;
+    constexpr int MapHeight = 20;
+    constexpr int MapMaxHeightWithLogs = 30;
+    constexpr int MapMaxHeightNoLogs = 40;
+    constexpr int MapMaxWidth = 154;
+    constexpr int WindowWidth = 160;
+    constexpr int WindowHeight = 50;
+    constexpr int LogsHeight = 12;
+    constexpr int LoginWidth = 80;
+    constexpr int InventoryWidth = 50;
+    constexpr int InventoryHeight = 15;
+    constexpr int MetroWidth = 40;
+    constexpr int TradeWidth = 60;
+    constexpr int TradeHeight = 20;
+    constexpr int HelpWidth = 60;
+    constexpr int MenuWidth = 30;
+    constexpr int PayDebtWidth = 40;
+    constexpr int AnnouncementWidth = 60;
+    constexpr int DialogWidth = 60;
+}
+
 std::vector<std::string> split_utf8(const std::string& str) {
     std::vector<std::string> chars;
     for (size_t i = 0; i < str.length();) {
@@ -94,7 +116,7 @@ void TuiRenderer::render(const GameState &state) {
                 log_title = text(" WARNING: " + state.lastError + " ") | color(Color::Red) | bold;
             }
 
-            logs_area = window(log_title, vbox(log_elements)) | size(HEIGHT, EQUAL, 12) | color(Color::Green);
+            logs_area = window(log_title, vbox(log_elements)) | size(HEIGHT, EQUAL, LogsHeight) | color(Color::Green);
         }
 
         content = vbox({
@@ -105,15 +127,15 @@ void TuiRenderer::render(const GameState &state) {
     }
 
     const Element document = content
-        | size(WIDTH, EQUAL, 160)
-        | size(HEIGHT, EQUAL, 50)
+        | size(WIDTH, EQUAL, WindowWidth)
+        | size(HEIGHT, EQUAL, WindowHeight)
         | borderStyled(ROUNDED)
         | color(Color::Cyan)
         | center;
 
     auto screen = Screen::Create(Dimension::Full(), Dimension::Full());
     if (screen.dimx() <= 1 || screen.dimy() <= 1) {
-        screen = Screen::Create(Dimension::Fixed(160), Dimension::Fixed(50));
+        screen = Screen::Create(Dimension::Fixed(WindowWidth), Dimension::Fixed(WindowHeight));
     }
 
     Render(screen, document);
@@ -180,7 +202,7 @@ Element TuiRenderer::buildLoginScreen(const GameState &state) {
                separator(),
                status_element | center
            });
-    return content | size(WIDTH, EQUAL, 80) | borderStyled(ROUNDED) | color(Color::Cyan) | center;
+    return content | size(WIDTH, EQUAL, LoginWidth) | borderStyled(ROUNDED) | color(Color::Cyan) | center;
 }
 
 Element TuiRenderer::buildMap(const GameState &state) {
@@ -199,12 +221,12 @@ Element TuiRenderer::buildMap(const GameState &state) {
         }
     }
 
-    int height = 20;
-    int width = 60;
+    int height = MapHeight;
+    int width = MapWidth;
 
-    const int max_height = state.showLogs ? 30 : 40;
+    const int max_height = state.showLogs ? MapMaxHeightWithLogs : MapMaxHeightNoLogs;
     if (rangeY > 0) height = std::min(rangeY * 2 + 1, max_height);
-    if (rangeX > 0) width = std::min(rangeX * 2 + 1, 154);
+    if (rangeX > 0) width = std::min(rangeX * 2 + 1, MapMaxWidth);
 
     const int clientTopLeftX = state.map.centerX - (width / 2);
     const int clientTopLeftY = state.map.centerY - (height / 2);
@@ -363,7 +385,7 @@ Element TuiRenderer::buildInventory(const GameState &state) {
     }
 
     return window(text(" CARGO HOLD ") | hcenter | bold, vbox(items))
-        | size(WIDTH, EQUAL, 50) | size(HEIGHT, EQUAL, 15) | borderStyled(ROUNDED) | color(Color::Cyan);
+        | size(WIDTH, EQUAL, InventoryWidth) | size(HEIGHT, EQUAL, InventoryHeight) | borderStyled(ROUNDED) | color(Color::Cyan);
 }
 
 Element TuiRenderer::buildMetroUi(const GameState &state) {
@@ -387,7 +409,7 @@ Element TuiRenderer::buildMetroUi(const GameState &state) {
     else if (state.metroUi.lineId == "line_g") lineColor = Color::Orange1;
 
     return window(text(" METRO: " + state.metroUi.lineId + " ") | hcenter | bold, vbox(stations))
-        | size(WIDTH, EQUAL, 40) | borderStyled(ROUNDED) | color(lineColor);
+        | size(WIDTH, EQUAL, MetroWidth) | borderStyled(ROUNDED) | color(lineColor);
 }
 
 Element TuiRenderer::buildTradeUi(const GameState &state) {
@@ -435,7 +457,7 @@ Element TuiRenderer::buildTradeUi(const GameState &state) {
         : text(" TRADER: " + tradeOffer.npcName + " [SELLING] ") | color(Color::Red) | bold;
 
     return window(hbox({title, filler(), text("[S] SWITCH MODE ")}), vbox(items))
-        | size(WIDTH, EQUAL, 60) | size(HEIGHT, EQUAL, 20) | borderStyled(ROUNDED) | color(Color::White);
+        | size(WIDTH, EQUAL, TradeWidth) | size(HEIGHT, EQUAL, TradeHeight) | borderStyled(ROUNDED) | color(Color::White);
 }
 
 Element TuiRenderer::buildHelp() {
@@ -469,7 +491,7 @@ Element TuiRenderer::buildHelp() {
         key_row("L", "Toggle Logs"),
         key_row("H", "Close Help"),
         key_row("ESC", "System Menu / Back")
-    })) | size(WIDTH, EQUAL, 60) | borderStyled(ROUNDED) | color(Color::White);
+    })) | size(WIDTH, EQUAL, HelpWidth) | borderStyled(ROUNDED) | color(Color::White);
 }
 
 Element TuiRenderer::buildMenu(const GameState &state) {
@@ -484,7 +506,7 @@ Element TuiRenderer::buildMenu(const GameState &state) {
         option("RESUME", 0),
         option("MANUAL", 1),
         option("QUIT", 2)
-    })) | size(WIDTH, EQUAL, 30) | borderStyled(ROUNDED) | color(Color::Green);
+    })) | size(WIDTH, EQUAL, MenuWidth) | borderStyled(ROUNDED) | color(Color::Green);
 }
 
 Element TuiRenderer::buildPayDebtUi(const GameState &state) {
@@ -495,7 +517,7 @@ Element TuiRenderer::buildPayDebtUi(const GameState &state) {
         text(state.debtInput + "_") | bold | color(Color::Yellow) | inverted,
         separator(),
         text("[ENTER] Confirm | [ESC] Cancel") | dim
-    })) | size(WIDTH, EQUAL, 40) | borderStyled(ROUNDED) | color(Color::Magenta);
+    })) | size(WIDTH, EQUAL, PayDebtWidth) | borderStyled(ROUNDED) | color(Color::Magenta);
 }
 
 Element TuiRenderer::buildAnnouncement(const GameState &state) {
@@ -503,7 +525,7 @@ Element TuiRenderer::buildAnnouncement(const GameState &state) {
         paragraphAlignCenter(state.announcementMessage) | bold | color(Color::Yellow),
         separator(),
         text("[ENTER] Close") | center | dim
-    })) | size(WIDTH, EQUAL, 60) | borderStyled(ROUNDED) | color(Color::Red);
+    })) | size(WIDTH, EQUAL, AnnouncementWidth) | borderStyled(ROUNDED) | color(Color::Red);
 }
 
 Element TuiRenderer::buildDialog(const GameState &state) {
@@ -511,5 +533,5 @@ Element TuiRenderer::buildDialog(const GameState &state) {
         paragraphAlignCenter(state.currentDialog.text) | color(Color::White),
         separator(),
         text("[ENTER] Close") | center | dim
-    })) | size(WIDTH, EQUAL, 60) | borderStyled(ROUNDED) | color(Color::White);
+    })) | size(WIDTH, EQUAL, DialogWidth) | borderStyled(ROUNDED) | color(Color::White);
 }

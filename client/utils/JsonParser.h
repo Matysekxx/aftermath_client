@@ -9,8 +9,22 @@
 namespace utils {
     using json = nlohmann::json;
 
+    /**
+     * @brief Utility class for parsing JSON data into DTO structures.
+     *
+     * This class provides static methods to safely extract data from nlohmann::json objects
+     * and populate the Data Transfer Objects (DTOs) defined in GameResponses.h.
+     * It handles missing keys and type mismatches gracefully by providing default values.
+     */
     class JsonParser {
     public:
+        /**
+         * @brief Safely extracts a string from a JSON object.
+         * @param j The JSON object.
+         * @param key The key to look up.
+         * @param def The default value if the key is missing or null.
+         * @return The extracted string or the default value.
+         */
         static std::string safeString(const json &j, const std::string &key, const std::string &def) {
             if (j.contains(key) && !j[key].is_null()) {
                 return j.value(key, def);
@@ -18,6 +32,13 @@ namespace utils {
             return def;
         }
 
+        /**
+         * @brief Safely extracts an integer from a JSON object.
+         * @param j The JSON object.
+         * @param key The key to look up.
+         * @param def The default value if the key is missing, null, or not a number.
+         * @return The extracted integer or the default value.
+         */
         static int safeInt(const json &j, const std::string &key, int def) {
             if (j.contains(key) && !j[key].is_null() && j[key].is_number()) {
                 return j[key].get<int>();
@@ -25,6 +46,13 @@ namespace utils {
             return def;
         }
 
+        /**
+         * @brief Safely extracts a long integer from a JSON object.
+         * @param j The JSON object.
+         * @param key The key to look up.
+         * @param def The default value if the key is missing, null, or not a number.
+         * @return The extracted long or the default value.
+         */
         static long safeLong(const json &j, const std::string &key, long def) {
             if (j.contains(key) && !j[key].is_null() && j[key].is_number()) {
                 return j[key].get<long>();
@@ -32,6 +60,11 @@ namespace utils {
             return def;
         }
 
+        /**
+         * @brief Parses a JSON object into an ItemDto.
+         * @param j The JSON object representing an item.
+         * @return A populated ItemDto.
+         */
         static dto::ItemDto parseItem(const json &j) {
             if (j.is_null()) return {};
             dto::ItemDto item;
@@ -45,6 +78,11 @@ namespace utils {
             return item;
         }
 
+        /**
+         * @brief Parses a JSON object into a MapDataResponse.
+         * @param j The JSON object representing map data.
+         * @return A populated MapDataResponse.
+         */
         static dto::MapDataResponse parseMap(const json &j) {
             dto::MapDataResponse m;
             if (j.is_null()) return m;
@@ -65,6 +103,11 @@ namespace utils {
             return m;
         }
 
+        /**
+         * @brief Parses a JSON object into a LoginOptionsResponse.
+         * @param j The JSON object representing login options.
+         * @return A populated LoginOptionsResponse.
+         */
         static dto::LoginOptionsResponse parseLoginOptions(const json &j) {
             dto::LoginOptionsResponse r;
             if (j.is_null()) return r;
@@ -82,6 +125,11 @@ namespace utils {
             return r;
         }
 
+        /**
+         * @brief Parses a JSON array into a vector of NpcDto.
+         * @param j The JSON array representing NPCs.
+         * @return A vector of populated NpcDto objects.
+         */
         static std::vector<dto::NpcDto> parseNpcs(const json &j) {
             std::vector<dto::NpcDto> npcs;
             if (j.is_array()) {
@@ -105,6 +153,11 @@ namespace utils {
             return npcs;
         }
 
+        /**
+         * @brief Parses a JSON array into a vector of MapObjectDto.
+         * @param j The JSON array representing map objects.
+         * @return A vector of populated MapObjectDto objects.
+         */
         static std::vector<dto::MapObjectDto> parseMapObjects(const json &j) {
             std::vector<dto::MapObjectDto> objects;
             if (j.is_array()) {
@@ -125,6 +178,12 @@ namespace utils {
             return objects;
         }
 
+        /**
+         * @brief Parses a JSON array into a vector of OtherPlayerDto.
+         * @param j The JSON array representing other players.
+         * @param selfId The ID of the current player (to exclude from the list).
+         * @return A vector of populated OtherPlayerDto objects.
+         */
         static std::vector<dto::OtherPlayerDto> parseOtherPlayers(const json &j, const std::string& selfId) {
             std::vector<dto::OtherPlayerDto> players;
             if (j.is_array()) {

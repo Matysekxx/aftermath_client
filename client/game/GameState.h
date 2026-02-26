@@ -6,19 +6,33 @@
 #include "../dto/GameResponses.h"
 #include <nlohmann/json.hpp>
 
+/**
+ * @brief Represents the current high-level state of the client application.
+ */
 enum class ClientState {
-    WAITING_FOR_INIT,
-    LOGIN_SCREEN,
-    PLAYING
+    WAITING_FOR_INIT, ///< Waiting for initial connection and handshake.
+    LOGIN_SCREEN, ///< User is at the login/character selection screen.
+    PLAYING ///< User is in the game world.
 };
 
+/**
+ * @brief Represents the mode of the trade UI.
+ */
 enum class TradeMode {
-    BUY,
-    SELL
+    BUY,  ///< Buying items from an NPC.
+    SELL ///< Selling items to an NPC.
 };
 
+/**
+ * @brief Holds the entire state of the game client.
+ *
+ * This class acts as a central repository for all game data, including player stats,
+ * map data, UI state, logs, and other entities. It is thread-safe for concurrent access
+ * (though primarily accessed by the main thread).
+ */
 class GameState {
 public:
+    /** @brief Mutex to protect concurrent access to the game state. */
     mutable std::mutex stateMutex;
 
     ClientState clientState = ClientState::WAITING_FOR_INIT;
@@ -40,6 +54,7 @@ public:
     std::vector<dto::NetworkLogDto> networkLogs;
     std::string lastError;
     std::vector<dto::ChatMessageResponse> chatHistory;
+
     dto::MetroUiResponse metroUi;
     dto::TradeUiLoadResponse tradeUi;
     int metroSelectionIndex = 0;
@@ -65,31 +80,28 @@ public:
     dto::DialogResponse currentDialog;
 
     void updatePlayer(const dto::PlayerDto &playerDto);
-
     void updateMap(const dto::MapDataResponse &newMap);
-
     void updateNpcs(const dto::NpcsUpdateResponse &newNpcs);
-
     void updateObjects(const dto::MapObjectsUpdateResponse &newObjects);
-
     void updateOtherPlayers(const std::vector<dto::OtherPlayerDto> &players);
-
     void addChatMessage(const dto::ChatMessageResponse &msg);
 
     void setMetroUi(const dto::MetroUiResponse &uiData);
-
     void setTradeUi(const dto::TradeUiLoadResponse &uiData);
 
     void toggleInventory();
     void scrollInventory(int delta);
     int getSelectedInventorySlot() const;
+
     void scrollMetro(int delta);
     dto::StationDto getSelectedMetroStation();
     void closeMetroUi();
+
     void scrollTrade(int delta);
     dto::ItemDto getSelectedTradeItem();
     void closeTradeUi();
     void toggleTradeMode();
+
     void toggleLogs();
     void toggleHelp();
     void toggleMenu();
